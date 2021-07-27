@@ -2,6 +2,7 @@ package br.com.igti.android.futebolquiz;
 
 /**
  * Created by maciel on 12/1/14.
+ * Alunos: Francis Wander Coelho, Hudson Marques dos Santos, Pedro Vinícius C. do Nascimento
  */
 public class Pergunta {
     private int mQuestao;

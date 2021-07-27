@@ -2,7 +2,9 @@ package br.com.igti.android.futebolquiz;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +15,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public class FutebolQuizActivity extends Activity {
@@ -27,6 +32,8 @@ public class FutebolQuizActivity extends Activity {
     private CardView mCardView;
 
     private int mIndiceAtual = 0;
+
+    private static final String PREF_PRIMEIRA_VEZ = "primeiraVez";
 
     private Pergunta[] mPerguntas = new Pergunta[]{
             new Pergunta(R.string.cardview_conteudo_joinville,true),
@@ -73,21 +80,23 @@ public class FutebolQuizActivity extends Activity {
         animator.start();
     }
 
+
+
     private void checaResposta(boolean botaoPressionado) {
         boolean resposta = mPerguntas[mIndiceAtual].isQuestaoVerdadeira();
-
         int recursoRespostaId = 0;
+        AudioPlayer player = new AudioPlayer();
 
         if (botaoPressionado == resposta) {
+            player.play(getApplicationContext(), R.raw.cashregister);
             recursoRespostaId = R.string.toast_acertou;
         } else {
+            player.play(getApplicationContext(), R.raw.buzzer);
             recursoRespostaId = R.string.toast_errou;
         }
 
         Toast.makeText(this, recursoRespostaId, Toast.LENGTH_SHORT).show();
     }
-
-
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -128,6 +137,16 @@ public class FutebolQuizActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG,"onResume()");
+
+        boolean primeiraVez = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(PREF_PRIMEIRA_VEZ,true);
+
+        if (primeiraVez) {
+            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                    .edit()
+                    .putBoolean(PREF_PRIMEIRA_VEZ,false)
+                    .commit();
+            Toast.makeText(this, "Bem-vindo ao FutebolQuiz!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
